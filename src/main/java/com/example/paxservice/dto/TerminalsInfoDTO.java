@@ -24,6 +24,9 @@ public class TerminalsInfoDTO {
 
     }
     public static List<TerminalsInfoDTO> fromRowList(List<List<DataQueryResultDTO.Row>> rowsList) {
+        if (rowsList == null) {
+            return new ArrayList<>();
+        }
         List<TerminalsInfoDTO> terminalsInfoDTOS = new ArrayList<>();
 
         for (List<DataQueryResultDTO.Row> rowList : rowsList) {

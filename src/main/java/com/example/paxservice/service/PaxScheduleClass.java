@@ -19,7 +19,7 @@ public class PaxScheduleClass {
     public static int currentPageOfQuestionary = 1;
     private final Lock lock = new ReentrantLock();
 
-    @Scheduled(fixedRate = 40000)
+    @Scheduled(fixedRate = 70000)
     public void startScheduler() {
         lock.lock();
         try{
@@ -30,7 +30,7 @@ public class PaxScheduleClass {
         }
     }
 
-    @Scheduled(fixedRate = 40000)
+    @Scheduled(fixedRate = 100000)
     public void startSecondScheduler(){
         lock.lock();
         try {
@@ -41,7 +41,7 @@ public class PaxScheduleClass {
         }
     }
 
-    @Scheduled(fixedRate = 40000)
+    @Scheduled(fixedRate = 90000)
     public void startSaveingQuestionaryData(){
         lock.lock();
         try {
@@ -55,7 +55,7 @@ public class PaxScheduleClass {
 
     private void saveRowsTask() {
         paxDataService.savePaxDataRows(currentPageOfPaxData);
-        log.info("SAVED 500 ROWS. PAGE: " + currentPageOfPaxData);
+        log.info("Saved pax Data. Page " + currentPageOfPaxData);
         currentPageOfPaxData = (currentPageOfPaxData % 200) + 1; // Обновляем параметр с 1 до 1000 и возвращаемся к 1 после 1000
     }
 

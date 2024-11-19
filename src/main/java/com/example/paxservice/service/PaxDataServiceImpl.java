@@ -39,32 +39,38 @@ public class PaxDataServiceImpl implements PaxDataService {
     @Override
     public void savePaxDataRows(int page) {
         List<PaxDataDTO> dataFromApi = goSignService.getDataFromApi(page);
-        for (PaxDataDTO paxDataDTO : dataFromApi) {
-            PaxDataEntity entity = Converter.convertFromPaxDataDto(paxDataDTO);
-            saveWithoutDuplicates(entity);
+        if (!dataFromApi.isEmpty()) {
+            for (PaxDataDTO paxDataDTO : dataFromApi) {
+                PaxDataEntity entity = Converter.convertFromPaxDataDto(paxDataDTO);
+                saveWithoutDuplicates(entity);
+            }
+            log.info("Saved in the table");
         }
-        log.info("Saved in the table");
     }
 
     @Override
     public void saveAdditionalInfoRows(int page) {
         List<TerminalsInfoDTO> dtoList = goSignService.getAdditionalInfo(page);
-        for (TerminalsInfoDTO dto : dtoList) {
-            TerminalsInfoEntity entity = Converter.convertAdditionalInfoDtoToEntity(dto);
-            saveAdditionalInfoWithoutDuplicates(entity);
+        if (!dtoList.isEmpty()) {
+            for (TerminalsInfoDTO dto : dtoList) {
+                TerminalsInfoEntity entity = Converter.convertAdditionalInfoDtoToEntity(dto);
+                saveAdditionalInfoWithoutDuplicates(entity);
+            }
+            log.info("Saved additional info");
         }
-        log.info("Saved additional info");
     }
 
     @Override
     public void saveQuestionaryData(int page) {
         List<QuestionaryDTO> questionaryList = goSignService.getQuestionaryInfo(page);
-        for (QuestionaryDTO questionary : questionaryList) {
-            QuestionaryEntity entity = Converter.convertQuestionaryDtoToEntity(questionary);
-            saveQuestionaryDataWithoutDuplicates(entity);
+        if (!questionaryList.isEmpty()) {
+            for (QuestionaryDTO questionary : questionaryList) {
+                QuestionaryEntity entity = Converter.convertQuestionaryDtoToEntity(questionary);
+                saveQuestionaryDataWithoutDuplicates(entity);
+            }
+            log.info("Saved Questionary data . Page : " + page + " ,Size: " + questionaryList.size());
+            saveQuestionaryCompositeEntity(questionaryList);
         }
-        log.info("Saved questionary data");
-        saveQuestionaryCompositeEntity(questionaryList);
     }
 
     @Override

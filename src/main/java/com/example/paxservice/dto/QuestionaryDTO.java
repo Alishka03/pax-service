@@ -3,6 +3,7 @@ package com.example.paxservice.dto;
 import com.pax.market.api.sdk.java.api.goinsight.dto.DataQueryResultDTO;
 import lombok.Data;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -43,12 +44,15 @@ public class QuestionaryDTO {
     }
 
     public static List<QuestionaryDTO> fromRowList(List<List<DataQueryResultDTO.Row>> rowsList) {
+        if (rowsList == null) {
+            return new ArrayList<>();
+        }
+
         List<QuestionaryDTO> questionaryList = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss XXX");
 
         for (List<DataQueryResultDTO.Row> rowList : rowsList) {
             QuestionaryDTO questionaryDTO = new QuestionaryDTO();
-
             for (DataQueryResultDTO.Row row : rowList) {
                 switch (row.getColName()) {
                     case "_sys_terminalid":
@@ -132,11 +136,13 @@ public class QuestionaryDTO {
                     case "_eventtime":
                         if (row.getValue() != null) {
                             ZonedDateTime parsedEventTime = ZonedDateTime.parse(row.getValue(), formatter);
-                            questionaryDTO.setEventTime(parsedEventTime);
+                            ZonedDateTime almatyTime = parsedEventTime.withZoneSameInstant(ZoneId.of("Asia/Almaty"));
+                            ZonedDateTime adjustedTime = almatyTime.minusHours(1);
+                            questionaryDTO.setEventTime(adjustedTime);
                         }
                         break;
                     default:
-                        // Log or handle unknown column names if needed
+                        // Optionally log or handle unknown column names
                         break;
                 }
             }
@@ -146,4 +152,6 @@ public class QuestionaryDTO {
 
         return questionaryList;
     }
+
+
 }

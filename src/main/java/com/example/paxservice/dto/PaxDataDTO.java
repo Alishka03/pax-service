@@ -56,6 +56,9 @@ public class PaxDataDTO {
     }
 
     public static List<PaxDataDTO> fromRowList(List<List<DataQueryResultDTO.Row>> rowsList) {
+        if (rowsList == null) {
+            return new ArrayList<>();
+        }
         List<PaxDataDTO> paxDataList = new ArrayList<>();
 
         for (List<DataQueryResultDTO.Row> rowList : rowsList) {

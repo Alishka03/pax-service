@@ -16,7 +16,7 @@ public class Controller {
     }
 
     @GetMapping("/questionary/get-by-page/{page}")
-    public ResponseEntity<?> getValue(@PathVariable int page){
+    public ResponseEntity<?> getValue(@PathVariable int page) {
         return new ResponseEntity<>(goSignService.getQuestionaryInfo(page), HttpStatus.OK);
     }
 
