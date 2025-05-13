@@ -14,4 +14,18 @@
         <sqlFile path="classpath:/db/sql/15112024/create_questionary_composite.sql" relativeToChangelogFile="false"
                  splitStatements="true"/>
     </changeSet>
+    <changeSet author="Alisher" id="3">
+        <sqlFile path="classpath:/db/sql/11122024/alter_table_questionary_new_columns.sql" relativeToChangelogFile="false"
+                 splitStatements="true"/>
+    </changeSet>
+
+    <changeSet author="Alisher" id="4">
+        <sqlFile path="classpath:/db/sql/181222024/create_table_cashier_mode.sql" relativeToChangelogFile="false"
+                 splitStatements="true"/>
+    </changeSet>
+
+    <changeSet author="Alisher" id="5">
+        <sqlFile path="classpath:/db/sql/181222024/create_table_security_info.sql" relativeToChangelogFile="false"
+                 splitStatements="true"/>
+    </changeSet>
 </databaseChangeLog>

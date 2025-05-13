@@ -1,11 +1,7 @@
 package com.example.paxservice;
 
-import com.example.paxservice.dto.PaxDataDTO;
-import com.example.paxservice.dto.QuestionaryDTO;
-import com.example.paxservice.dto.TerminalsInfoDTO;
+import com.example.paxservice.dto.*;
 import com.example.paxservice.entity.*;
-
-import java.time.LocalDate;
 
 
 public class Converter {
@@ -69,7 +65,6 @@ public class Converter {
 
     public static QuestionaryEntity convertQuestionaryDtoToEntity(QuestionaryDTO dto) {
         QuestionaryEntity entity = new QuestionaryEntity();
-
         entity.setSysTerminalId(dto.getSysTerminalId());
         entity.setSysResellerId(dto.getSysResellerId());
         entity.setSysMerchantId(dto.getSysMerchantId());
@@ -77,6 +72,21 @@ public class Converter {
         entity.setEventTime(dto.getEventTime());
         entity.setPspVersion(dto.getPspVersion());
         entity.setEnableCashierMode(dto.getEnableCashierMode());
+        entity.setAcquirerTerminalId(dto.getAcquirerTerminalId());
+        entity.setGocardMerchantId(dto.getGocardMerchantId());
+        entity.setGocardTerminalId(dto.getGocardTerminalId());
+        entity.setAcquirerName(dto.getAcquirerName());
+        entity.setReceiptCheckTitle(dto.getReceiptCheckTitle());
+        entity.setEdcPedMode(dto.getEdcPedMode());
+        entity.setHalykQrPointOfSale(dto.getHalykQrPointOfSale());
+        entity.setEnableT7s(dto.getEnableT7s());
+        entity.setAcquirerTerminalId2(dto.getAcquirerTerminalId2());
+        entity.setGocardMerchantId2(dto.getGocardMerchantId2());
+        entity.setGocardTerminalId2(dto.getGocardTerminalId2());
+        entity.setHalykQrPointOfSale2(dto.getHalykQrPointOfSale2());
+        entity.setAcquirerName2(dto.getAcquirerName2());
+        entity.setReceiptCheckTitle2(dto.getReceiptCheckTitle2());
+        entity.setSettingsAdminCommonLicense(dto.getSettingsAdminCommonLicense());
         entity.setQuestion1(dto.getQuestion1());
         entity.setAnswer1(dto.getAnswer1());
         entity.setQuestion2(dto.getQuestion2());
@@ -100,4 +110,41 @@ public class Converter {
 
         return entity;
     }
+
+    public static CashierMode convertCashierModeDtoToEntity(CashierModeDTO dto) {
+        CashierMode entity = new CashierMode();
+        entity.setSysTerminalId(dto.getTerminalSN());
+        entity.setSysResellerId(dto.getReseller());
+        entity.setSysMerchantId(dto.getMerchant());
+        entity.setPosId(dto.getPosid());
+        entity.setPspVersion(dto.getPspVersion());
+        entity.setEnableCashierMode(dto.getEnableCashierMode());
+        entity.setEventTime(dto.getEventTime());
+        return entity;
+    }
+
+    public static SecurityInfo convertFromSecurityInfoDto(SecurityInfoDTO dto) {
+        SecurityInfo entity = new SecurityInfo();
+
+        entity.setSysTerminalId(dto.get_sys_terminalid());
+        entity.setAcquirerTerminalId(dto.getAcquirerTerminalId());
+        entity.setSysResellerId(dto.get_sys_resellerid());
+        entity.setSysMerchantId(dto.get_sys_merchantid());
+        entity.setAcquirerName(dto.getAcquirerName());
+        entity.setHalykQrPointOfSale(dto.getHalykQrPointOfSale());
+        entity.setEnableT7s(dto.getEnableT7s());
+        entity.setEdcPedMode(dto.getEdcPedMode());
+        entity.setGocardMerchantId(dto.getGocardMerchantId());
+        entity.setReceiptCheckTitle(dto.getReceiptCheckTitle());
+        entity.setSettingsAdminCommonLicense(dto.getSettingsAdminCommonLicense());
+        entity.setGocardTerminalId(dto.getGocardTerminalId());
+        entity.setReceiptCheckTitle2(dto.getReceiptCheckTitle2());
+        entity.setAcquirerTerminalId2(dto.getAcquirerTerminalId2());
+        entity.setAcquirerName2(dto.getAcquirerName2());
+        entity.setGocardTerminalId2(dto.getGocardTerminalId2());
+        entity.setEventTime(dto.get_eventtime());
+
+        return entity;
+    }
+
 }

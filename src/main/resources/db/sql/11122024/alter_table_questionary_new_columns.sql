@@ -1,0 +1,16 @@
+ALTER TABLE questionary
+    ADD COLUMN IF NOT EXISTS settings_admin_common_license VARCHAR,
+    ADD COLUMN IF NOT EXISTS acquirer_terminal_id VARCHAR,
+    ADD COLUMN IF NOT EXISTS acquirer_terminal_id2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS gocard_merchant_id VARCHAR,
+    ADD COLUMN IF NOT EXISTS gocard_merchant_id2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS gocard_terminal_id VARCHAR,
+    ADD COLUMN IF NOT EXISTS gocard_terminal_id2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS acquirer_name VARCHAR,
+    ADD COLUMN IF NOT EXISTS acquirer_name2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS receipt_check_title VARCHAR,
+    ADD COLUMN IF NOT EXISTS receipt_check_title2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS halyk_qr_point_of_sale VARCHAR,
+    ADD COLUMN IF NOT EXISTS halyk_qr_point_of_sale2 VARCHAR,
+    ADD COLUMN IF NOT EXISTS edc_ped_mode VARCHAR,
+    ADD COLUMN IF NOT EXISTS enable_t7s VARCHAR;

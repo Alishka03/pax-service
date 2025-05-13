@@ -18,4 +18,14 @@ public interface QuestionaryRepository extends JpaRepository<QuestionaryEntity, 
             @Param("_sys_terminalid") String _sys_terminalid,
             @Param("_eventtime") ZonedDateTime _eventtime);
 
+
+    @Query("SELECT q FROM QuestionaryEntity q WHERE " +
+            "q.sysTerminalId = :_sys_terminalid " +
+            "AND q.eventTime = :_eventtime " +
+            "AND q.acquirerTerminalId IS NULL " +
+            "ORDER BY q.id")
+    Optional<QuestionaryEntity> getQuestionaryEntitiesBySysTerminalIdAndEventTime(
+            @Param("_sys_terminalid") String _sys_terminalid,
+            @Param("_eventtime") ZonedDateTime _eventtime);
+
 }

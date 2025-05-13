@@ -1,0 +1,21 @@
+CREATE TABLE if not exists security_info (
+                               id BIGSERIAL PRIMARY KEY,
+                               _sys_terminalid VARCHAR(255) NOT NULL,
+                               acquirer_terminal_id VARCHAR(255),
+                               _sys_resellerid VARCHAR(255),
+                               _sys_merchantid VARCHAR(255),
+                               acquirer_name VARCHAR(255),
+                               halyk_qr_point_of_sale VARCHAR(255),
+                               enable_t7s VARCHAR(255),
+                               edc_ped_mode VARCHAR(255),
+                               gocard_merchant_id VARCHAR(255),
+                               receipt_check_title VARCHAR(255),
+                               settings_admin_common_license VARCHAR(255),
+                               gocard_terminal_id VARCHAR(255),
+                               receipt_check_title2 VARCHAR(255),
+                               acquirer_terminal_id2 VARCHAR(255),
+                               acquirer_name2 VARCHAR(255),
+                               gocard_terminal_id2 VARCHAR(255),
+                               _eventtime VARCHAR(255),
+                               UNIQUE (_sys_terminalid, _eventtime)
+);

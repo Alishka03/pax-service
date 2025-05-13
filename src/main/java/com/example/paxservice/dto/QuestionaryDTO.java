@@ -19,6 +19,21 @@ public class QuestionaryDTO {
     private String posId;
     private String pspVersion;
     private String enableCashierMode;
+    private String acquirerTerminalId;
+    private String gocardMerchantId;
+    private String gocardTerminalId;
+    private String acquirerName;
+    private String receiptCheckTitle;
+    private String edcPedMode;
+    private String halykQrPointOfSale;
+    private String enableT7s;
+    private String acquirerTerminalId2;
+    private String gocardMerchantId2;
+    private String gocardTerminalId2;
+    private String halykQrPointOfSale2;
+    private String acquirerName2;
+    private String receiptCheckTitle2;
+    private String settingsAdminCommonLicense;
     private String question1;
     private String answer1;
     private String question2;
@@ -49,7 +64,7 @@ public class QuestionaryDTO {
         }
 
         List<QuestionaryDTO> questionaryList = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss XXX");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         for (List<DataQueryResultDTO.Row> rowList : rowsList) {
             QuestionaryDTO questionaryDTO = new QuestionaryDTO();
@@ -72,6 +87,51 @@ public class QuestionaryDTO {
                         break;
                     case "enable_cashier_mode":
                         questionaryDTO.setEnableCashierMode(row.getValue());
+                        break;
+                    case "acquirer_terminal_id":
+                        questionaryDTO.setAcquirerTerminalId(row.getValue());
+                        break;
+                    case "gocard_merchant_id":
+                        questionaryDTO.setGocardMerchantId(row.getValue());
+                        break;
+                    case "gocard_terminal_id":
+                        questionaryDTO.setGocardTerminalId(row.getValue());
+                        break;
+                    case "acquirer_name":
+                        questionaryDTO.setAcquirerName(row.getValue());
+                        break;
+                    case "receipt_check_title":
+                        questionaryDTO.setReceiptCheckTitle(row.getValue());
+                        break;
+                    case "edc_ped_mode":
+                        questionaryDTO.setEdcPedMode(row.getValue());
+                        break;
+                    case "halyk_qr_point_of_sale":
+                        questionaryDTO.setHalykQrPointOfSale(row.getValue());
+                        break;
+                    case "enable_t7s":
+                        questionaryDTO.setEnableT7s(row.getValue());
+                        break;
+                    case "acquirer_terminal_id2":
+                        questionaryDTO.setAcquirerTerminalId2(row.getValue());
+                        break;
+                    case "gocard_merchant_id2":
+                        questionaryDTO.setGocardMerchantId2(row.getValue());
+                        break;
+                    case "gocard_terminal_id2":
+                        questionaryDTO.setGocardTerminalId2(row.getValue());
+                        break;
+                    case "halyk_qr_point_of_sale2":
+                        questionaryDTO.setHalykQrPointOfSale2(row.getValue());
+                        break;
+                    case "acquirer_name2":
+                        questionaryDTO.setAcquirerName2(row.getValue());
+                        break;
+                    case "receipt_check_title2":
+                        questionaryDTO.setReceiptCheckTitle2(row.getValue());
+                        break;
+                    case "settings_admin_common_license":
+                        questionaryDTO.setSettingsAdminCommonLicense(row.getValue());
                         break;
                     case "question1":
                         questionaryDTO.setQuestion1(row.getValue());
@@ -135,10 +195,13 @@ public class QuestionaryDTO {
                         break;
                     case "_eventtime":
                         if (row.getValue() != null) {
-                            ZonedDateTime parsedEventTime = ZonedDateTime.parse(row.getValue(), formatter);
-                            ZonedDateTime almatyTime = parsedEventTime.withZoneSameInstant(ZoneId.of("Asia/Almaty"));
-                            ZonedDateTime adjustedTime = almatyTime.minusHours(1);
-                            questionaryDTO.setEventTime(adjustedTime);
+                            try {
+                                ZonedDateTime parsedEventTime = ZonedDateTime.parse(row.getValue(), formatter);
+                                questionaryDTO.setEventTime(parsedEventTime);
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }
                         break;
                     default:

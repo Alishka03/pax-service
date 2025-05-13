@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,12 +18,14 @@ public class PaxScheduleClass {
     public static int currentPageOfPaxData = 1;
     public static int currentPageOfAdditionalInfo = 1;
     public static int currentPageOfQuestionary = 1;
+    public static int currentPageOfCashierMode = 1;
+    public static int currentPageOfSecurityInfo = 1;
     private final Lock lock = new ReentrantLock();
 
     @Scheduled(fixedRate = 70000)
     public void startScheduler() {
         lock.lock();
-        try{
+        try {
             log.info("TRYING TO GET PAX DATA");
             saveRowsTask();
         } finally {
@@ -31,7 +34,7 @@ public class PaxScheduleClass {
     }
 
     @Scheduled(fixedRate = 100000)
-    public void startSecondScheduler(){
+    public void startSecondScheduler() {
         lock.lock();
         try {
             log.info("Trying to save additional pax info");
@@ -41,13 +44,35 @@ public class PaxScheduleClass {
         }
     }
 
-    @Scheduled(fixedRate = 90000)
-    public void startSaveingQuestionaryData(){
+    @Scheduled(fixedRate = 120000)
+    public void saveCashierModeTask() {
+        lock.lock();
+        try {
+            log.info("TRYING TO SAVE CASHIER MODE TABLE");
+            saveCashierMode();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Scheduled(fixedRate = 110000)
+    public void startSavingQuestionaryData() {
         lock.lock();
         try {
             log.info("Trying to save questionary data");
             saveQuestionaryValuesTask();
         } finally {
+            lock.unlock();
+        }
+    }
+
+    @Scheduled(fixedRate = 140000)
+    public void startSavingSecurityInfo() {
+        lock.lock();
+        try {
+            log.info("Trying to save security info");
+            saveSecurityInfo();
+        }finally {
             lock.unlock();
         }
     }
@@ -59,16 +84,55 @@ public class PaxScheduleClass {
         currentPageOfPaxData = (currentPageOfPaxData % 200) + 1; // Обновляем параметр с 1 до 1000 и возвращаемся к 1 после 1000
     }
 
-    private void saveAdditionalInfoTask(){
+    private void saveAdditionalInfoTask() {
         paxDataService.saveAdditionalInfoRows(currentPageOfAdditionalInfo);
         log.info("Saved additional rows. Page: " + currentPageOfAdditionalInfo);
         currentPageOfAdditionalInfo = (currentPageOfAdditionalInfo % 200) + 1;
     }
 
-    private void saveQuestionaryValuesTask(){
-        paxDataService.saveQuestionaryData(currentPageOfQuestionary);
-        log.info("Saved Questionary values. Page: " + currentPageOfQuestionary);
-        currentPageOfQuestionary = (currentPageOfQuestionary % 200) + 1;
+    private void saveCashierMode() {
+        boolean isEmpty = paxDataService.saveCashierMode(currentPageOfCashierMode);
+        if (!isEmpty) {
+            currentPageOfCashierMode = 1;
+        } else {
+            if (currentPageOfCashierMode == 2) {
+                currentPageOfCashierMode = 1;
+            }else{
+                currentPageOfQuestionary = (currentPageOfQuestionary % 200) + 1;
+            }
+        }
+    }
+
+    @Transactional
+    public void saveSecurityInfo(){
+        boolean isEmpty = paxDataService.saveSecurityInfo(currentPageOfSecurityInfo);
+        if (!isEmpty) {
+            currentPageOfSecurityInfo = 1;
+        } else {
+            if (currentPageOfSecurityInfo == 2) {
+                currentPageOfSecurityInfo = 1;
+            }else{
+                currentPageOfSecurityInfo = (currentPageOfSecurityInfo % 200) + 1;
+            }
+        }
+    }
+
+    @Transactional
+    public void saveQuestionaryValuesTask() {
+        boolean isEmpty = paxDataService.saveQuestionaryData(currentPageOfQuestionary);
+
+        if (!isEmpty) {
+            log.info("No data found for page {}. Resetting to page 1.", currentPageOfQuestionary);
+            currentPageOfQuestionary = 1;
+        } else {
+            if (currentPageOfQuestionary == 2) {
+                log.info("No data found for page {}. Resetting to page 1.", currentPageOfQuestionary);
+                currentPageOfQuestionary = 1;
+            } else {
+                currentPageOfQuestionary = (currentPageOfQuestionary % 200) + 1;
+            }
+        }
+        log.info("Current page of questionary data: " + currentPageOfQuestionary);
     }
 
 

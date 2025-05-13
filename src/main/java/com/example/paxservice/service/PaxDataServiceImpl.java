@@ -1,18 +1,10 @@
 package com.example.paxservice.service;
 
 import com.example.paxservice.Converter;
-import com.example.paxservice.dto.PaxDataDTO;
-import com.example.paxservice.dto.QuestionaryDTO;
-import com.example.paxservice.dto.TerminalsInfoDTO;
-import com.example.paxservice.entity.PaxDataEntity;
-import com.example.paxservice.entity.QuestionaryCompositeEntity;
-import com.example.paxservice.entity.QuestionaryEntity;
-import com.example.paxservice.entity.TerminalsInfoEntity;
+import com.example.paxservice.dto.*;
+import com.example.paxservice.entity.*;
 import com.example.paxservice.entity.embeddable.QuestionaryId;
-import com.example.paxservice.repository.PaxDataRepository;
-import com.example.paxservice.repository.QuestionaryCompositeRepository;
-import com.example.paxservice.repository.QuestionaryRepository;
-import com.example.paxservice.repository.TerminalsInfoRepository;
+import com.example.paxservice.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +26,8 @@ public class PaxDataServiceImpl implements PaxDataService {
     private final TerminalsInfoRepository terminalsInfoRepository;
     private final QuestionaryRepository questionaryRepository;
     private final QuestionaryCompositeRepository questionaryCompositeRepository;
+    private final CashierModeRepository cashierModeRepository;
+    private final SecurityInfoRepository securityInfoRepository;
 
 
     @Override
@@ -61,27 +55,57 @@ public class PaxDataServiceImpl implements PaxDataService {
     }
 
     @Override
-    public void saveQuestionaryData(int page) {
+    public boolean saveQuestionaryData(int page) {
         List<QuestionaryDTO> questionaryList = goSignService.getQuestionaryInfo(page);
+        log.info("The length of questionary from GoInsight: " + questionaryList.size());
+        int counter = 0;
         if (!questionaryList.isEmpty()) {
             for (QuestionaryDTO questionary : questionaryList) {
                 QuestionaryEntity entity = Converter.convertQuestionaryDtoToEntity(questionary);
-                saveQuestionaryDataWithoutDuplicates(entity);
+                boolean isSaved = saveQuestionaryEntity(entity);
+                if (isSaved) {
+                    log.info("Saved questionary : _eventtime: {}, posid: {}", entity.getEventTime(), entity.getPosId());
+                    counter++;
+                }
             }
-            log.info("Saved Questionary data . Page : " + page + " ,Size: " + questionaryList.size());
+            log.info("Saved Questionary data . Page : {} ,Size: {}", page, counter);
             saveQuestionaryCompositeEntity(questionaryList);
-        }
+            return true;
+        } else return false;
     }
 
+
     @Override
+    public boolean saveQuestionaryList(List<QuestionaryDTO> questionaryList) {
+        log.info("The length of questionary from GoInsight: " + questionaryList.size());
+        int counter = 0;
+        if (!questionaryList.isEmpty()) {
+            for (QuestionaryDTO questionary : questionaryList) {
+                QuestionaryEntity entity = Converter.convertQuestionaryDtoToEntity(questionary);
+                boolean isSaved = saveQuestionaryEntity(entity);
+                if (isSaved) {
+                    log.info("Saved questionary : _eventtime: {}, posid: {}", entity.getEventTime(), entity.getPosId());
+                    counter++;
+                }
+            }
+            log.info("Saved Questionary data . ,Size: {}", counter);
+            saveQuestionaryCompositeEntity(questionaryList);
+            return true;
+        } else return false;
+    }
+
+
+    @Override
+    @Transactional
     public void saveQuestionaryCompositeEntity(List<QuestionaryDTO> list) {
-        log.info("Trying to save Questionary Composite Table");
         list.forEach(questionaryDTO -> {
             QuestionaryId id = new QuestionaryId(questionaryDTO.getSysTerminalId(), questionaryDTO.getPosId());
             Optional<QuestionaryCompositeEntity> entityOptional = questionaryCompositeRepository.findById(id);
 
             if (entityOptional.isEmpty()) {
-                questionaryCompositeRepository.save(new QuestionaryCompositeEntity(id, questionaryDTO.getEventTime()));
+                if (questionaryDTO.getPosId() != null) {
+                    questionaryCompositeRepository.save(new QuestionaryCompositeEntity(id, questionaryDTO.getEventTime()));
+                }
             } else {
                 QuestionaryCompositeEntity entity = entityOptional.get();
                 ZonedDateTime dtoEventTimeInUtc = questionaryDTO.getEventTime().withZoneSameInstant(ZoneOffset.UTC);
@@ -96,6 +120,61 @@ public class PaxDataServiceImpl implements PaxDataService {
         log.info("Saved questionary values.");
     }
 
+
+    public boolean saveCashierMode(int page) {
+        List<CashierModeDTO> list = goSignService.getCashierModeInfo(page);
+
+        if (list == null || list.isEmpty()) {
+            log.info("No CashierMode data found to save. Page: {}", page);
+            return false;
+        }
+
+        int counter = 0;
+        for (CashierModeDTO cashierModeDTO : list) {
+            CashierMode entity = Converter.convertCashierModeDtoToEntity(cashierModeDTO);
+            boolean exists = cashierModeExistsBySysterminalIdAndEventTime(entity);
+
+            if (!exists) {
+                cashierModeRepository.save(entity);
+                log.info("Saved CashierMode. SysTerminalId: {}, EventTime: {}", entity.getSysTerminalId(), entity.getEventTime());
+                counter++;
+            }
+        }
+
+        log.info("Saved {} CashierMode records. Page: {}", counter, page);
+        return true;
+    }
+
+    @Transactional
+    public boolean saveSecurityInfo(int page) {
+        List<SecurityInfoDTO> list = goSignService.getSecurityInfoByPage(page);
+
+        if (list == null || list.isEmpty()) {
+            log.info("No SecurityInfo data found to save. Page: {}", page);
+            return false;
+        }
+
+        int counter = 0;
+        for (SecurityInfoDTO dto : list) {
+            SecurityInfo entity = Converter.convertFromSecurityInfoDto(dto);
+            boolean exists = securityInfoRepository.findBySysTerminalIdAndEventTime(entity.getSysTerminalId(), entity.getEventTime()).isPresent();
+
+            if (!exists) {
+                securityInfoRepository.save(entity);
+                log.info("Saved SecurityInfo. SysTerminalId: {}, EventTime: {}", entity.getSysTerminalId(), entity.getEventTime());
+                counter++;
+            }
+        }
+
+        log.info("Saved {} SecurityInfo records. Page: {}", counter, page);
+        return true;
+    }
+
+
+    public boolean cashierModeExistsBySysterminalIdAndEventTime(CashierMode entity) {
+        Optional<CashierMode> exists = cashierModeRepository.findBySysTerminalIdAndEventTime(entity.getSysTerminalId(), entity.getEventTime());
+        return exists.isPresent();
+    }
 
     public void saveWithoutDuplicates(PaxDataEntity paxDataEntity) {
         Optional<PaxDataEntity> existingEntity = findFirstByTerminalIdAndEventTime(paxDataEntity);
@@ -123,10 +202,13 @@ public class PaxDataServiceImpl implements PaxDataService {
         }
     }
 
-    public void saveQuestionaryDataWithoutDuplicates(QuestionaryEntity entity) {
+    private boolean saveQuestionaryEntity(QuestionaryEntity entity) {
         Optional<QuestionaryEntity> questionaryEntity = getFirstQuestionaryByTerminalIdAndEventTime(entity);
-        if (questionaryEntity.isEmpty()) {
+        if (questionaryEntity.isPresent()) {
+            return false;
+        } else {
             questionaryRepository.save(entity);
+            return true;
         }
     }
 

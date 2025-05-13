@@ -1,4 +1,5 @@
 package com.example.paxservice.entity;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,51 @@ public class QuestionaryEntity {
 
     @Column(name = "enable_cashier_mode")
     private String enableCashierMode;
+
+    @Column(name = "acquirer_terminal_id")
+    private String acquirerTerminalId;
+
+    @Column(name = "gocard_merchant_id")
+    private String gocardMerchantId;
+
+    @Column(name = "gocard_terminal_id")
+    private String gocardTerminalId;
+
+    @Column(name = "acquirer_name")
+    private String acquirerName;
+
+    @Column(name = "receipt_check_title")
+    private String receiptCheckTitle;
+
+    @Column(name = "edc_ped_mode")
+    private String edcPedMode;
+
+    @Column(name = "halyk_qr_point_of_sale")
+    private String halykQrPointOfSale;
+
+    @Column(name = "enable_t7s")
+    private String enableT7s;
+
+    @Column(name = "acquirer_terminal_id2")
+    private String acquirerTerminalId2;
+
+    @Column(name = "gocard_merchant_id2")
+    private String gocardMerchantId2;
+
+    @Column(name = "gocard_terminal_id2")
+    private String gocardTerminalId2;
+
+    @Column(name = "halyk_qr_point_of_sale2")
+    private String halykQrPointOfSale2;
+
+    @Column(name = "acquirer_name2")
+    private String acquirerName2;
+
+    @Column(name = "receipt_check_title2")
+    private String receiptCheckTitle2;
+
+    @Column(name = "settings_admin_common_license")
+    private String settingsAdminCommonLicense;
 
     @Column(name = "question1")
     private String question1;
@@ -95,10 +141,3 @@ public class QuestionaryEntity {
     @Column(name = "answer10")
     private String answer10;
 }
-//THIS IS NEW ENTITY
-//BUT THEY ARE ASKING ME CREATE another new ENTITY
-//ENTITY [SET_HERE_NAME_BY_YOURSELF]
-//systerminal_id PRIMARY KEY
-//pos_id PRIMARY KEY
-//event_time
-//questionary_composite
